@@ -9,10 +9,6 @@ crossSbtVersions := Seq("1.11.4")
 val packagerVersion = "1.11.1"
 val packager19xVersion = "1.9.16"
 
-addSbtPlugin(
-  "com.github.sbt" % "sbt-native-packager" % packagerVersion % "provided"
-)
-
 // compile settings
 scalacOptions ++= Seq(
   "-encoding",
@@ -42,6 +38,15 @@ lazy val `sbt-javaagent` = (project.in(file(".")))
   .settings(
     name := "sbt-javaagent",
     organization := "com.github.sbt",
+    scalaVersion := "3.7.2",
+    pluginCrossBuild / sbtVersion := {
+      scalaBinaryVersion.value match {
+        case "2.12" =>
+          sbtVersion.value
+        case _ =>
+          "2.0.0-RC3"
+      }
+    },
     scriptedBufferLog := false,
     scriptedLaunchOpts ++= Seq(
       "-Dproject.version=" + version.value,

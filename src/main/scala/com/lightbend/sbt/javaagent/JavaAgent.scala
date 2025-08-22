@@ -63,13 +63,13 @@ class JavaAgent extends AutoPlugin {
     javaAgents := Seq.empty,
     ivyConfigurations += AgentConfig,
     libraryDependencies ++= javaAgents.value.map(_.module),
-    resolvedJavaAgents := resolveAgents.value,
+    resolvedJavaAgents := Def.uncached(resolveAgents.value),
     run/fork := enableFork(run/fork, _.scope.run).value,
     run/connectInput := enableFork(run/fork, _.scope.run).value,
     Test/fork := enableFork(Test/fork, _.scope.test).value,
     run/javaOptions ++= agentOptions(_.agent.scope.run).value,
     Test/javaOptions ++= agentOptions(_.agent.scope.test).value,
-    Test/fullClasspath := filterAgents((Test/fullClasspath).value, resolvedJavaAgents.value)
+    Test/fullClasspath := Def.uncached(filterAgents((Test/fullClasspath).value, resolvedJavaAgents.value))
   )
 
   private def resolveAgents = Def.task[Seq[ResolvedAgent]] {
@@ -104,6 +104,6 @@ class JavaAgent extends AutoPlugin {
 
   def filterAgents(classpath: Classpath, resolvedAgents: Seq[ResolvedAgent]): Classpath = {
     val agents = resolvedAgents.map(resolved => resolved.artifact.absolutePath)
-    classpath.filter(aFile => !agents.contains(aFile.data.getAbsolutePath))
+    ??? //classpath.filter(aFile => !agents.contains(aFile.data.getAbsolutePath))
   }
 }
